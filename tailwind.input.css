@@ -1,3 +1,62 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===== Dark Mode ===== */
+html.dark { color-scheme: dark; }
+.dark body { background-color: #0a0a0a; color: #fafafa; }
+
+/* Backgrounds */
+.dark .bg-white          { background-color: #171717; }
+.dark .bg-neutral-50     { background-color: #0a0a0a; }
+.dark .bg-neutral-50\/50 { background-color: rgba(10,10,10,0.5); }
+.dark .bg-neutral-100    { background-color: #262626; }
+.dark .bg-neutral-200    { background-color: #404040; }
+.dark .bg-neutral-900    { background-color: #fafafa; }
+
+/* Text */
+.dark .text-neutral-900 { color: #fafafa; }
+.dark .text-neutral-700 { color: #d4d4d4; }
+.dark .text-neutral-600 { color: #d4d4d4; }
+.dark .text-neutral-500 { color: #a3a3a3; }
+.dark .text-neutral-400 { color: #737373; }
+.dark .text-neutral-300 { color: #525252; }
+.dark .text-white       { color: #0a0a0a; }
+
+/* Borders */
+.dark .border-neutral-200 { border-color: #404040; }
+.dark .border-neutral-100 { border-color: #262626; }
+.dark .divide-neutral-100 > :not([hidden]) ~ :not([hidden]) { border-color: #262626; }
+
+/* Hover states */
+.dark .hover\:bg-neutral-50:hover  { background-color: #262626; }
+.dark .hover\:bg-neutral-800:hover { background-color: #e5e5e5; }
+.dark .hover\:bg-neutral-700:hover { background-color: #d4d4d4; }
+.dark .hover\:bg-red-50:hover      { background-color: #3b0000; }
+.dark .hover\:text-neutral-900:hover { color: #fafafa; }
+.dark .hover\:text-red-500:hover   { color: #fca5a5; }
+.dark .hover\:border-red-200:hover { border-color: #991b1b; }
+
+/* Shadow */
+.dark .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.8); }
+
+/* Form inputs */
+.dark input:not([type="checkbox"]),
+.dark select {
+    background-color: #262626;
+    color: #fafafa;
+    border-color: #404040;
+}
+.dark input::placeholder { color: #737373; }
+.dark .accent-neutral-900 { accent-color: #fafafa; }
+
+/* Status badges */
+.dark .bg-green-50   { background-color: #052e16; }
+.dark .bg-red-50     { background-color: #3b0000; }
+.dark .bg-blue-50    { background-color: #172554; }
+.dark .border-red-200  { border-color: #7f1d1d; }
+.dark .border-blue-200 { border-color: #1e3a8a; }
+.dark .text-green-600 { color: #86efac; }
+.dark .text-red-600   { color: #fca5a5; }
+.dark .text-red-500   { color: #fca5a5; }
+.dark .text-blue-600  { color: #93c5fd; }

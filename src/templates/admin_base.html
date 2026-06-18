@@ -26,6 +26,10 @@
             </nav>
         </div>
         <div class="flex items-center gap-3">
+            <button x-data="themeToggle()" @click="toggle()"
+                    class="p-1.5 rounded-md text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50 transition-colors">
+                <i class="fa-solid text-xs" :class="isDark ? 'fa-sun' : 'fa-moon'"></i>
+            </button>
             <span class="text-sm text-neutral-500">{{ user.username }} 님</span>
             <a href="/change-password"
                 class="px-3 py-1.5 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer">
