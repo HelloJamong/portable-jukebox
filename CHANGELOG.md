@@ -1,5 +1,15 @@
 # Changelog
 
+## [26.3.0] - 2026-06-18
+
+### Added
+- **다운로드 이력 정리 버튼** — `DELETE /download/{log_id}` 엔드포인트 추가, 완료·오류 항목에 정리 버튼 표시, 클릭 시 실제 파일 삭제 및 이력 soft delete (HTMX로 행 즉시 제거)
+- **로고 적용** — `logo.ico`를 파비콘, 로그인·대시보드·관리자 화면 헤더 및 중앙 로고 영역에 적용
+
+### Fixed
+- **버튼 클릭 불가 문제 해결** — Tailwind Play CDN(동기 JS, MutationObserver 재컴파일)을 제거하고 Docker 빌드 시 Tailwind CLI로 정적 CSS 컴파일로 교체, Alpine.js 초기화 이후 메인 스레드 블로킹 제거
+- **SQLite WAL 모드 활성화** — 다운로드 백그라운드 스레드와의 write lock 경합 해소
+
 ## [26.2.2] - 2026-06-18
 
 ### Fixed

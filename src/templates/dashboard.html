@@ -3,7 +3,11 @@
 {% block content %}
 <div class="relative w-full max-w-[1440px] min-h-screen bg-white border border-neutral-200 mx-auto flex flex-col">
 
-    <header class="sticky top-0 z-50 w-full h-20 bg-white flex items-center justify-end px-10 border-b border-neutral-100">
+    <header class="sticky top-0 z-50 w-full h-20 bg-white flex items-center justify-between px-10 border-b border-neutral-100">
+        <div class="flex items-center gap-2">
+            <img src="/static/logo.ico" alt="Portable-Jukebox" class="h-8 w-8">
+            <span class="font-bold text-sm">Portable-Jukebox</span>
+        </div>
         <div class="flex items-center gap-4">
             <span class="text-sm font-medium">{{ user.username }} 님</span>
             <a href="/change-password"
@@ -19,6 +23,7 @@
 
     <main class="flex-1 flex flex-col items-center pt-24 pb-20">
         <div class="text-center mb-12">
+            <img src="/static/logo.ico" alt="Portable-Jukebox" class="h-16 w-16 mx-auto mb-4">
             <h1 class="text-4xl font-bold tracking-tight mb-4">Portable-Jukebox</h1>
             <p class="text-neutral-500">원하는 유튜브 영상의 링크를 입력하여 간편하게 다운로드하세요.</p>
         </div>

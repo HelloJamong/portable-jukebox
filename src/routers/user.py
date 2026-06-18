@@ -249,6 +249,30 @@ async def download_status(
     )
 
 
+@router.delete("/download/{log_id}", response_class=HTMLResponse)
+async def delete_download(
+    log_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    log = db.query(DownloadLog).filter(
+        DownloadLog.id == log_id,
+        DownloadLog.user_id == user.id,
+        DownloadLog.deleted_at == None,
+    ).first()
+    if not log:
+        raise HTTPException(status_code=404)
+    if log.filename:
+        path = downloader.DOWNLOAD_DIR / log.filename
+        if path.exists():
+            path.unlink()
+    log.deleted_at = _now_kst()
+    log_event("manual_delete", username=user.username,
+              detail={"filename": log.filename}, db=db)
+    db.commit()
+    return HTMLResponse("")
+
+
 @router.get("/files/{filename}")
 async def serve_file(
     filename: str,
