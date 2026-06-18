@@ -9,7 +9,7 @@
             if (e.persisted) location.reload();
         });
         new MutationObserver(function() {
-            var el = document.getElementById('bit-notification-bar');
+            var el = document.querySelector('bit-notification-bar-root');
             if (el) el.remove();
         }).observe(document.documentElement, {childList: true, subtree: true});
         (function(){

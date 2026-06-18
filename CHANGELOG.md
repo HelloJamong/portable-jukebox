@@ -1,5 +1,10 @@
 # Changelog
 
+## [26.5.3] - 2026-06-18
+
+### Fixed
+- **Bitwarden Shadow DOM 우회 완전 해결** — Bitwarden이 `<bit-notification-bar-root>` 커스텀 엘리먼트에 closed Shadow DOM으로 알림 바를 주입해 `getElementById`로 접근 불가하던 문제 수정. Shadow DOM 내부 대신 호스트 요소(`bit-notification-bar-root`)를 직접 `querySelector`로 찾아 제거하도록 변경
+
 ## [26.5.2] - 2026-06-18
 
 ### Fixed
