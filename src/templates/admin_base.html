@@ -35,10 +35,12 @@
                 class="px-3 py-1.5 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer">
                 <i class="fa-solid fa-key text-neutral-400 text-xs mr-1.5"></i>비밀번호 변경
             </a>
-            <a href="/logout"
-                class="px-3 py-1.5 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer">
-                <i class="fa-solid fa-right-from-bracket text-neutral-400 text-xs mr-1.5"></i>로그아웃
-            </a>
+            <form method="post" action="/logout" class="contents">
+                <button type="submit"
+                    class="px-3 py-1.5 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer">
+                    <i class="fa-solid fa-right-from-bracket text-neutral-400 text-xs mr-1.5"></i>로그아웃
+                </button>
+            </form>
         </div>
     </header>
     <main class="max-w-5xl mx-auto px-8 py-8">

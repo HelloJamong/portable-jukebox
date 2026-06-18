@@ -1,5 +1,11 @@
 # Changelog
 
+## [26.4.3] - 2026-06-18
+
+### Fixed
+- **Brave 브라우저 로그아웃 버튼 차단 문제 해결** — Brave의 "Bounce Tracking Prevention"이 `GET /logout → 302 → /login` 리다이렉트 체인을 트래킹 bounce로 오탐해 내비게이션을 차단하던 문제 수정. 로그아웃을 `<a href>` GET에서 `<form method="post">` POST 방식으로 변경(POST→303→GET은 표준 PRG 패턴으로 차단되지 않음). 백엔드도 GET·POST 모두 수용하도록 `@router.post("/logout")` 추가
+- **Brave Fingerprinting Protection 대응** — `localStorage` 접근을 `try/catch`로 감싸 Brave의 aggressive 지문 차단 모드에서 FOSC 스크립트 또는 `themeToggle()`이 예외를 던져도 Alpine.js 초기화에 영향을 주지 않도록 수정
+
 ## [26.4.2] - 2026-06-18
 
 ### Fixed

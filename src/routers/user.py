@@ -107,6 +107,7 @@ async def login(
 
 
 @router.get("/logout")
+@router.post("/logout")
 async def logout(request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
     if user_id:

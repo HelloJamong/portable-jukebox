@@ -6,9 +6,15 @@
     <title>{% block title %}Portable-Jukebox{% endblock %}</title>
     <script>
         (function(){
-            var t=localStorage.getItem('theme');
-            if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
-                document.documentElement.classList.add('dark');
+            try {
+                var t=localStorage.getItem('theme');
+                if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
+                    document.documentElement.classList.add('dark');
+                }
+            } catch(e) {
+                if(window.matchMedia('(prefers-color-scheme:dark)').matches){
+                    document.documentElement.classList.add('dark');
+                }
             }
         })();
         function themeToggle(){
@@ -17,7 +23,7 @@
                 toggle(){
                     this.isDark=!this.isDark;
                     document.documentElement.classList.toggle('dark',this.isDark);
-                    localStorage.setItem('theme',this.isDark?'dark':'light');
+                    try { localStorage.setItem('theme',this.isDark?'dark':'light'); } catch(e){}
                 }
             };
         }
