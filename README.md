@@ -10,22 +10,27 @@
 
 - **YouTube 다운로드** — MP4(1080p/720p/480p/360p) 및 MP3(320/192/128/96kbps) 지원
 - **실시간 진행률** — HTMX 폴링 기반 다운로드 상태 표시
+- **파일 직접 다운로드** — 완료된 파일을 브라우저로 바로 내려받기
+- **다운로드 이력 정리** — 완료·오류 항목 개별 삭제 (파일 및 이력 동시 제거)
+- **다크/라이트 모드** — 시스템 설정 자동 감지, 헤더 토글로 수동 전환, 설정 유지
 - **계정 관리** — 관리자/사용자 역할 분리, 최초 로그인 시 비밀번호 변경 강제
 - **자동 로그인** — 보안 토큰 기반 30일 자동 로그인 지원
 - **파일 자동 삭제** — 보관 기간 설정 후 매일 자정 만료 파일 자동 삭제
 - **시스템 로그** — 로그인/로그아웃, 다운로드, 계정 변경, 설정 변경 이력 통합 기록
 - **패스워드 복잡성 설정** — 최소 자릿수, 대문자/숫자/특수문자 요구사항 관리자 설정
-- **Docker 배포** — Watchtower 자동 업데이트 포함
+- **Docker 배포** — GitHub Actions 자동 빌드·릴리즈
 
 ## 기술 스택
 
 | 구분 | 사용 기술 |
 |---|---|
-| Backend | Python 3.12, FastAPI, SQLAlchemy, SQLite |
+| Backend | Python 3.12, FastAPI, SQLAlchemy, SQLite (WAL) |
 | Frontend | HTMX, Alpine.js, Tailwind CSS, Jinja2 |
 | 다운로드 | yt-dlp, ffmpeg |
 | 인증 | Starlette SessionMiddleware, bcrypt |
-| 배포 | Docker, Watchtower, GitHub Actions |
+| 배포 | Docker, GitHub Actions |
+
+> 모든 정적 자산(JS, CSS, 폰트, 아이콘)은 Docker 빌드 시 다운로드해 로컬 서빙합니다. 외부 CDN 의존성 없음.
 
 ## 빠른 시작
 
@@ -41,6 +46,14 @@ docker compose up -d
 ```
 
 브라우저에서 `http://localhost:8000` 접속 후 관리자 계정으로 로그인합니다.
+
+### 이미지 업데이트
+
+새 버전이 릴리즈되면 아래 명령으로 업데이트합니다.
+
+```bash
+docker compose pull && docker compose up -d
+```
 
 ### 로컬 개발
 
@@ -59,26 +72,18 @@ uv run uvicorn src.main:app --reload
 | `SECRET_KEY` | 세션 암호화 키 | `dev-secret-...` |
 | `ADMIN_USERNAME` | 초기 관리자 아이디 | `admin` |
 | `ADMIN_PASSWORD` | 초기 관리자 비밀번호 | `admin1234` |
-| `DOWNLOAD_DIR` | 다운로드 저장 경로 | `./downloads` |
-| `DATABASE_URL` | SQLite DB 경로 | `sqlite:///./data/jukebox.db` |
+| `DOWNLOAD_DIR` | 다운로드 저장 경로 | `/downloads` |
+| `DATABASE_URL` | SQLite DB 경로 | `sqlite:////app/data/jukebox.db` |
 
 ### SECRET_KEY 발급
 
-운영 환경에서는 반드시 충분히 긴 무작위 값을 사용하세요. 아래 방법 중 하나로 생성할 수 있습니다.
+운영 환경에서는 반드시 충분히 긴 무작위 값을 사용하세요.
 
 ```bash
-# Python
 python -c "import secrets; print(secrets.token_urlsafe(32))"
-
-# OpenSSL
-openssl rand -hex 32
 ```
 
 생성된 값을 `.env` 파일의 `SECRET_KEY`에 설정합니다.
-
-```env
-SECRET_KEY=여기에_생성된_값_붙여넣기
-```
 
 ## 디렉터리 구조
 
@@ -95,6 +100,10 @@ src/
 │   └── admin.py     # 관리자 라우트 (계정/설정/로그)
 └── templates/       # Jinja2 템플릿
 ```
+
+## 디자인
+
+본 프로젝트 디자인은 [Vinsign](https://vinsign.app/ko-kr)을 통해 제작되었습니다.
 
 ## 라이선스
 
