@@ -29,7 +29,7 @@ async def admin_users(
     db: Session = Depends(get_db),
     admin: User = Depends(require_admin),
 ):
-    users = db.query(User).filter(User.is_active == True).order_by(User.created_at.desc()).all()
+    users = db.query(User).filter(User.is_active.is_(True)).order_by(User.created_at.desc()).all()
     return templates.TemplateResponse(request, "admin/users.html", {"user": admin, "users": users})
 
 
@@ -42,7 +42,7 @@ async def create_user(
     admin: User = Depends(require_admin),
 ):
     if db.query(User).filter(User.username == username).first():
-        users = db.query(User).filter(User.is_active == True).order_by(User.created_at.desc()).all()
+        users = db.query(User).filter(User.is_active.is_(True)).order_by(User.created_at.desc()).all()
         return templates.TemplateResponse(
             request, "admin/users.html",
             {"user": admin, "users": users, "error": "이미 존재하는 아이디입니다."},

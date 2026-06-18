@@ -29,7 +29,7 @@ def _delete_expired_files() -> None:
         cutoff = _now_kst() - timedelta(days=days)
         expired = (
             db.query(DownloadLog)
-            .filter(DownloadLog.deleted_at == None, DownloadLog.downloaded_at < cutoff)
+            .filter(DownloadLog.deleted_at.is_(None), DownloadLog.downloaded_at < cutoff)
             .all()
         )
 

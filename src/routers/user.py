@@ -7,6 +7,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
+from markupsafe import escape
 from sqlalchemy.orm import Session
 
 from .. import downloader
@@ -72,7 +73,7 @@ async def login(
     auto_login: str = Form(""),
     db: Session = Depends(get_db),
 ):
-    user = db.query(User).filter(User.username == username, User.is_active == True).first()
+    user = db.query(User).filter(User.username == username, User.is_active.is_(True)).first()
     if not user or not verify_password(password, user.hashed_password):
         log_event("login_fail", username=username, detail={"ip": request.client.host}, db=db)
         db.commit()
@@ -174,7 +175,7 @@ async def dashboard(
         return RedirectResponse("/admin/users", status_code=302)
     logs = (
         db.query(DownloadLog)
-        .filter(DownloadLog.user_id == user.id, DownloadLog.deleted_at == None)
+        .filter(DownloadLog.user_id == user.id, DownloadLog.deleted_at.is_(None))
         .order_by(DownloadLog.downloaded_at.desc())
         .limit(20)
         .all()
@@ -227,21 +228,31 @@ async def download_status(
     if status in ("pending", "downloading"):
         return HTMLResponse(_progress_html(task_id, progress, status, poll))
 
+    logs = (
+        db.query(DownloadLog)
+        .filter(DownloadLog.user_id == user.id, DownloadLog.deleted_at.is_(None))
+        .order_by(DownloadLog.downloaded_at.desc())
+        .limit(20)
+        .all()
+    )
+    history_oob = (
+        '<div id="history-list" class="space-y-3" hx-swap-oob="outerHTML">'
+        + templates.env.get_template("partials/history_list.html").render(logs=logs)
+        + "</div>"
+    )
+
     if status == "done":
         return HTMLResponse(
-            '<div class="flex items-center justify-center gap-2 py-3 text-sm text-green-600"'
-            ' hx-get="/download/history" hx-trigger="load" hx-target="#history-list" hx-swap="outerHTML">'
+            '<div class="flex items-center justify-center gap-2 py-3 text-sm text-green-600">'
             '<i class="fa-solid fa-circle-check"></i><span>다운로드가 완료되었습니다.</span>'
-            "</div>"
+            f"</div>{history_oob}"
         )
 
-    from markupsafe import escape
     msg = escape(task.get("error_display", task.get("error", "알 수 없는 오류")))
     return HTMLResponse(
-        '<div class="flex items-center justify-center gap-2 py-3 text-sm text-red-500"'
-        ' hx-get="/download/history" hx-trigger="load" hx-target="#history-list" hx-swap="outerHTML">'
+        '<div class="flex items-center justify-center gap-2 py-3 text-sm text-red-500">'
         f'<i class="fa-solid fa-circle-exclamation"></i><span>{msg}</span>'
-        "</div>"
+        f"</div>{history_oob}"
     )
 
 
@@ -252,7 +263,7 @@ async def download_history(
 ):
     logs = (
         db.query(DownloadLog)
-        .filter(DownloadLog.user_id == user.id, DownloadLog.deleted_at == None)
+        .filter(DownloadLog.user_id == user.id, DownloadLog.deleted_at.is_(None))
         .order_by(DownloadLog.downloaded_at.desc())
         .limit(20)
         .all()
@@ -270,7 +281,7 @@ async def delete_download(
     log = db.query(DownloadLog).filter(
         DownloadLog.id == log_id,
         DownloadLog.user_id == user.id,
-        DownloadLog.deleted_at == None,
+        DownloadLog.deleted_at.is_(None),
     ).first()
     if not log:
         raise HTTPException(status_code=404)
@@ -317,7 +328,7 @@ def _progress_html(task_id: str, progress: int, status: str, poll: int = 0) -> s
     else:
         bar = (
             '<div class="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">'
-            '<div class="h-full bg-neutral-400 rounded-full animate-pulse" style="width:40%"></div>'
+            '<div class="h-full bg-neutral-400 rounded-full animate-pulse w-full"></div>'
             '</div>'
         )
     return (

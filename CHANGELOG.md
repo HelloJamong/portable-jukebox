@@ -1,5 +1,16 @@
 # Changelog
 
+## [26.5.6] - 2026-06-18
+
+### Fixed
+- **로고 이미지 404 수정** — `src/img/logo.ico`가 `static/` 디렉터리에 없어 템플릿 4곳(base.html, dashboard.html, login.html, admin_base.html)에서 로고가 표시되지 않던 문제 수정
+- **다운로드 대기 상태바 40% 고정 표시 수정** — pending 구간에서 진행 막대가 40% 너비로 고정되어 실제 진행값처럼 오해되던 문제 수정. `w-full animate-pulse`로 변경해 불확정 로딩 상태 명확화
+- **다운로드 완료·오류 후 이력 자동 갱신 수정** — `hx-trigger="load"` 방식이 HTMX 2.x `outerHTML` swap 이후 불안정하게 발화되던 문제 수정. 상태 폴링 응답에 HTMX OOB swap으로 `#history-list`를 직접 포함해 완료 즉시 목록 갱신
+
+### Changed
+- **SQLAlchemy filter 비교 연산자 수정** — `== None` · `== True` 7곳을 `.is_(None)` · `.is_(True)`로 교체 (E711/E712)
+- **코드 스타일 정리** — `models.py` SQLAlchemy import 순서(E402), `database.py` 빈 줄 누락(E302), `user.py` 함수 내부 import(E402) 수정
+
 ## [26.5.5] - 2026-06-18
 
 ### Fixed

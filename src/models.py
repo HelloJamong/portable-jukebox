@@ -1,13 +1,15 @@
 from datetime import datetime, timedelta, timezone
 
+from sqlalchemy import BigInteger, Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
+from .database import Base
+
 KST = timezone(timedelta(hours=9))
 
 
 def _now_kst() -> datetime:
     return datetime.now(KST).replace(tzinfo=None)
-from sqlalchemy import BigInteger, Boolean, Column, DateTime, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-from .database import Base
 
 
 class User(Base):
