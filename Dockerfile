@@ -18,7 +18,13 @@ COPY tailwind.input.css .
 RUN pip install --no-cache-dir . \
     && tailwindcss -i tailwind.input.css -o static/main.css --content "./src/templates/**/*.html" --minify \
     && curl -sL https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js -o static/htmx.min.js \
-    && curl -sL https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js -o static/alpine.min.js
+    && curl -sL https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js -o static/alpine.min.js \
+    && mkdir -p static/css static/webfonts \
+    && curl -sL "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" -o static/css/font-awesome.min.css \
+    && curl -sL "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-solid-900.woff2" -o static/webfonts/fa-solid-900.woff2 \
+    && curl -sL "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-regular-400.woff2" -o static/webfonts/fa-regular-400.woff2 \
+    && curl -sL "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-brands-400.woff2" -o static/webfonts/fa-brands-400.woff2 \
+    && curl -sL "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/PretendardVariable.woff2" -o static/PretendardVariable.woff2
 
 FROM python:3.12-slim AS runner
 ARG VERSION=latest

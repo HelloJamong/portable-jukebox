@@ -1,5 +1,10 @@
 # Changelog
 
+## [26.4.1] - 2026-06-18
+
+### Fixed
+- **헤더 버튼 클릭 불가 완전 해결** — Pretendard(jsdelivr)·Font Awesome(cdnjs) 외부 CSS가 render-blocking 리소스로 작동해 Alpine.js 초기화가 지연되던 문제 제거. Docker 빌드 시 Font Awesome CSS·웹폰트(woff2 3종) 및 Pretendard Variable 폰트를 `/static/`에 내려받아 로컬 서빙으로 전환, 외부 CDN 의존성 완전 제거
+
 ## [26.4.0] - 2026-06-18
 
 ### Added
