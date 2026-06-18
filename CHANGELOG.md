@@ -1,5 +1,12 @@
 # Changelog
 
+## [26.2.1] - 2026-06-18
+
+### Fixed
+- 다운로드 진행 중 로그아웃 버튼이 눌리지 않는 문제 수정 — `_progress_html()`이 생성하는 폴링 `<div>`에 `id="progress-container"`가 중복 부여되어 DOM에 같은 ID 요소가 2~3개 중첩되는 버그 제거
+- 다운로드 완료·오류·작업 없음 응답에서도 동일한 `id="progress-container"` 중복 제거
+- `hx-swap-oob="true"` → `hx-swap-oob="outerHTML"` 명시 (HTMX 2.x 권장 방식)
+
 ## [26.2.0] - 2026-06-18
 
 ### Added

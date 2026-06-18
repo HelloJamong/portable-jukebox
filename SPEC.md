@@ -215,24 +215,24 @@ async def start_download(
 ### test_auth.py (부분 구현)
 - [x] `test_password_round_trip` — bcrypt 해싱/검증
 - [x] `test_login_success` — 올바른 자격증명 → 세션 생성, 302 리다이렉트
-- [ ] `test_login_fail` — 잘못된 비밀번호 → 401, `login_fail` ActivityLog 기록
-- [ ] `test_login_redirects_admin` — admin 로그인 → `/admin/users` 리다이렉트
-- [ ] `test_must_change_password` — `must_change_password=True` → `/change-password` 강제
-- [ ] `test_require_login_redirect` — 비로그인 상태 `/` 접근 → `/login` 리다이렉트
-- [ ] `test_require_admin_forbidden` — 일반 유저 `/admin/*` 접근 → 403
-- [ ] `test_password_complexity` — 복잡성 규칙 위반 시 에러 메시지 반환
+- [x] `test_login_fail` — 잘못된 비밀번호 → 401, `login_fail` ActivityLog 기록
+- [x] `test_login_redirects_admin` — admin 로그인 → `/admin/users` 리다이렉트
+- [x] `test_must_change_password` — `must_change_password=True` → `/change-password` 강제
+- [x] `test_require_login_redirect` — 비로그인 상태 `/` 접근 → `/login` 리다이렉트
+- [x] `test_require_admin_forbidden` — 일반 유저 `/admin/*` 접근 → 403
+- [x] `test_password_complexity` — 복잡성 규칙 위반 시 에러 메시지 반환
 
 ### test_downloader.py (미작성)
-- [ ] `test_classify_error_invalid_url` — URL 오류 분류 검증
-- [ ] `test_classify_error_private` — 비공개 영상 분류 검증
-- [ ] `test_classify_error_network` — 네트워크 오류 분류 검증
-- [ ] `test_enqueue_returns_task_id` — `enqueue()` 호출 → UUID 형식 task_id 반환
-- [ ] `test_task_cleanup` — done/error 후 10분 뒤 TASKS에서 제거 (Timer mock)
+- [x] `test_classify_error_invalid_url` — URL 오류 분류 검증
+- [x] `test_classify_error_private` — 비공개 영상 분류 검증
+- [x] `test_classify_error_network` — 네트워크 오류 분류 검증
+- [x] `test_enqueue_returns_task_id` — `enqueue()` 호출 → UUID 형식 task_id 반환
+- [x] `test_task_cleanup` — done/error 후 10분 뒤 TASKS에서 제거 (Timer mock)
 
 ### test_scheduler.py (미작성)
-- [ ] `test_skip_when_retention_zero` — `retention_days=0` → 파일 삭제 안 함
-- [ ] `test_delete_expired` — 기한 초과 파일 삭제 + `deleted_at` 업데이트 + `auto_delete` 로그 기록
-- [ ] `test_skip_not_expired` — 기한 미초과 파일은 보존
+- [x] `test_skip_when_retention_zero` — `retention_days=0` → 파일 삭제 안 함
+- [x] `test_delete_expired` — 기한 초과 파일 삭제 + `deleted_at` 업데이트 + `auto_delete` 로그 기록
+- [x] `test_skip_not_expired` — 기한 미초과 파일은 보존
 
 ---
 

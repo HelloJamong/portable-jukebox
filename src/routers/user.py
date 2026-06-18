@@ -213,7 +213,7 @@ async def download_status(
     task = downloader.TASKS.get(task_id)
     if not task:
         return HTMLResponse(
-            '<div id="progress-container" class="text-sm text-red-500 text-center py-2">'
+            '<div class="text-sm text-red-500 text-center py-2">'
             "작업을 찾을 수 없습니다.</div>"
         )
 
@@ -233,20 +233,18 @@ async def download_status(
         )
         history_html = templates.env.get_template("partials/history_list.html").render(logs=logs)
         return HTMLResponse(
-            '<div id="progress-container">'
             '<div class="flex items-center justify-center gap-2 py-3 text-sm text-green-600">'
             '<i class="fa-solid fa-circle-check"></i><span>다운로드가 완료되었습니다.</span>'
-            "</div></div>"
-            f'<div id="history-list" class="space-y-3" hx-swap-oob="true">{history_html}</div>'
+            "</div>"
+            f'<div id="history-list" class="space-y-3" hx-swap-oob="outerHTML">{history_html}</div>'
         )
 
     from markupsafe import escape
     msg = escape(task.get("error_display", task.get("error", "알 수 없는 오류")))
     return HTMLResponse(
-        '<div id="progress-container">'
         '<div class="flex items-center justify-center gap-2 py-3 text-sm text-red-500">'
         f'<i class="fa-solid fa-circle-exclamation"></i><span>{msg}</span>'
-        "</div></div>"
+        "</div>"
     )
 
 
@@ -266,8 +264,7 @@ async def serve_file(
 def _progress_html(task_id: str, progress: int, status: str) -> str:
     label = "다운로드 준비 중..." if status == "pending" else "다운로드 진행 중..."
     return (
-        f'<div id="progress-container"'
-        f' hx-get="/download/status/{task_id}"'
+        f'<div hx-get="/download/status/{task_id}"'
         f' hx-trigger="every 2s" hx-swap="outerHTML">'
         f'<div class="flex justify-between text-xs text-neutral-500 mb-1.5">'
         f"<span>{label}</span><span>{progress}%</span></div>"
