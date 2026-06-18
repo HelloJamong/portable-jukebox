@@ -207,6 +207,7 @@ async def start_download(
 async def download_status(
     task_id: str,
     request: Request,
+    poll: int = 0,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
@@ -221,7 +222,7 @@ async def download_status(
     progress = task["progress"]
 
     if status in ("pending", "downloading"):
-        return HTMLResponse(_progress_html(task_id, progress, status))
+        return HTMLResponse(_progress_html(task_id, progress, status, poll))
 
     if status == "done":
         logs = (
@@ -261,10 +262,17 @@ async def serve_file(
     return FileResponse(path, filename=filename, media_type="application/octet-stream")
 
 
-def _progress_html(task_id: str, progress: int, status: str) -> str:
+def _progress_html(task_id: str, progress: int, status: str, poll: int = 0) -> str:
     label = "다운로드 준비 중..." if status == "pending" else "다운로드 진행 중..."
+    # ponytail: stop polling after 10 min (300 × 2s) to prevent infinite loop on hung tasks
+    if poll >= 300:
+        return (
+            '<div class="flex items-center justify-center gap-2 py-3 text-sm text-red-500">'
+            '<i class="fa-solid fa-circle-exclamation"></i><span>다운로드 시간이 초과되었습니다. 다시 시도해주세요.</span>'
+            "</div>"
+        )
     return (
-        f'<div hx-get="/download/status/{task_id}"'
+        f'<div hx-get="/download/status/{task_id}?poll={poll + 1}"'
         f' hx-trigger="every 2s" hx-swap="outerHTML">'
         f'<div class="flex justify-between text-xs text-neutral-500 mb-1.5">'
         f"<span>{label}</span><span>{progress}%</span></div>"
