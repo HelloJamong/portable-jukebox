@@ -1,5 +1,10 @@
 # Changelog
 
+## [26.4.4] - 2026-06-18
+
+### Fixed
+- **Brave bfcache 복원으로 인한 버튼 클릭 불가 근본 해결** — `Cache-Control: no-store` 미들웨어만으로는 Brave 일부 버전에서 bfcache 복원을 막지 못하는 버그 우회. `pageshow` 이벤트에서 `e.persisted === true` 감지 시 즉시 `location.reload()`를 호출해 bfcache 복원 페이지를 강제로 신선하게 재로드. Alpine.js·HTMX가 항상 새 상태로 초기화되어 버튼 이벤트 핸들러가 올바르게 등록됨
+
 ## [26.4.3] - 2026-06-18
 
 ### Fixed

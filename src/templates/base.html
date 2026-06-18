@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Portable-Jukebox{% endblock %}</title>
     <script>
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted) location.reload();
+        });
         (function(){
             try {
                 var t=localStorage.getItem('theme');
