@@ -1,5 +1,11 @@
 # Changelog
 
+## [26.5.5] - 2026-06-18
+
+### Fixed
+- **다운로드 진행률 막대 미표시 수정** — 진행률 0%일 때 bar width가 0px로 막대가 보이지 않던 문제 수정. 진행률 미확인 구간에는 40% 너비 + animate-pulse 애니메이션으로 "진행 중" 상태 시각 표시, 실제 진행률 확인 시 실제 막대로 전환
+- **다운로드 완료 후 이력 미갱신 수정 (재수정)** — HTMX 2.x에서 `hx-swap="outerHTML"` 응답의 OOB swap 신뢰성 문제로 히스토리가 자동 갱신되지 않던 문제 수정. 완료/오류 응답 div에 `hx-trigger="load"`를 적용해 DOM 삽입 즉시 `/download/history`를 별도 요청으로 fetch하여 `#history-list` 교체
+
 ## [26.5.4] - 2026-06-18
 
 ### Fixed

@@ -228,28 +228,37 @@ async def download_status(
         return HTMLResponse(_progress_html(task_id, progress, status, poll))
 
     if status == "done":
-        logs = (
-            db.query(DownloadLog)
-            .filter(DownloadLog.user_id == user.id, DownloadLog.deleted_at == None)
-            .order_by(DownloadLog.downloaded_at.desc())
-            .limit(20)
-            .all()
-        )
-        history_html = templates.env.get_template("partials/history_list.html").render(logs=logs)
         return HTMLResponse(
-            '<div class="flex items-center justify-center gap-2 py-3 text-sm text-green-600">'
+            '<div class="flex items-center justify-center gap-2 py-3 text-sm text-green-600"'
+            ' hx-get="/download/history" hx-trigger="load" hx-target="#history-list" hx-swap="outerHTML">'
             '<i class="fa-solid fa-circle-check"></i><span>다운로드가 완료되었습니다.</span>'
             "</div>"
-            f'<div id="history-list" class="space-y-3" hx-swap-oob="outerHTML">{history_html}</div>'
         )
 
     from markupsafe import escape
     msg = escape(task.get("error_display", task.get("error", "알 수 없는 오류")))
     return HTMLResponse(
-        '<div class="flex items-center justify-center gap-2 py-3 text-sm text-red-500">'
+        '<div class="flex items-center justify-center gap-2 py-3 text-sm text-red-500"'
+        ' hx-get="/download/history" hx-trigger="load" hx-target="#history-list" hx-swap="outerHTML">'
         f'<i class="fa-solid fa-circle-exclamation"></i><span>{msg}</span>'
         "</div>"
     )
+
+
+@router.get("/download/history", response_class=HTMLResponse)
+async def download_history(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    logs = (
+        db.query(DownloadLog)
+        .filter(DownloadLog.user_id == user.id, DownloadLog.deleted_at == None)
+        .order_by(DownloadLog.downloaded_at.desc())
+        .limit(20)
+        .all()
+    )
+    history_html = templates.env.get_template("partials/history_list.html").render(logs=logs)
+    return HTMLResponse(f'<div id="history-list" class="space-y-3">{history_html}</div>')
 
 
 @router.delete("/download/{log_id}", response_class=HTMLResponse)
@@ -290,7 +299,6 @@ async def serve_file(
 
 
 def _progress_html(task_id: str, progress: int, status: str, poll: int = 0) -> str:
-    label = "다운로드 준비 중..." if status == "pending" else "다운로드 진행 중..."
     # ponytail: stop polling after 10 min (300 × 2s) to prevent infinite loop on hung tasks
     if poll >= 300:
         return (
@@ -298,12 +306,24 @@ def _progress_html(task_id: str, progress: int, status: str, poll: int = 0) -> s
             '<i class="fa-solid fa-circle-exclamation"></i><span>다운로드 시간이 초과되었습니다. 다시 시도해주세요.</span>'
             "</div>"
         )
+    label = "다운로드 준비 중..." if (status == "pending" or progress == 0) else "다운로드 진행 중..."
+    pct_label = f"{progress}%" if progress > 0 else "..."
+    if progress > 0:
+        bar = (
+            f'<div class="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">'
+            f'<div class="h-full bg-neutral-900 rounded-full transition-all" style="width:{progress}%"></div>'
+            f'</div>'
+        )
+    else:
+        bar = (
+            '<div class="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">'
+            '<div class="h-full bg-neutral-400 rounded-full animate-pulse" style="width:40%"></div>'
+            '</div>'
+        )
     return (
         f'<div hx-get="/download/status/{task_id}?poll={poll + 1}"'
         f' hx-trigger="every 2s" hx-swap="outerHTML">'
         f'<div class="flex justify-between text-xs text-neutral-500 mb-1.5">'
-        f"<span>{label}</span><span>{progress}%</span></div>"
-        f'<div class="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">'
-        f'<div class="h-full bg-neutral-900 rounded-full transition-all" style="width:{progress}%"></div>'
-        f"</div></div>"
+        f"<span>{label}</span><span>{pct_label}</span></div>"
+        f"{bar}</div>"
     )
