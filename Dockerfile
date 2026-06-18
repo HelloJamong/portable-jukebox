@@ -16,8 +16,9 @@ COPY src ./src
 COPY static ./static
 COPY tailwind.input.css .
 RUN pip install --no-cache-dir . \
-    && mkdir -p static \
-    && tailwindcss -i tailwind.input.css -o static/main.css --content "./src/templates/**/*.html" --minify
+    && tailwindcss -i tailwind.input.css -o static/main.css --content "./src/templates/**/*.html" --minify \
+    && curl -sL https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js -o static/htmx.min.js \
+    && curl -sL https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js -o static/alpine.min.js
 
 FROM python:3.12-slim AS runner
 ARG VERSION=latest

@@ -1,5 +1,10 @@
 # Changelog
 
+## [26.3.3] - 2026-06-18
+
+### Fixed
+- **로그인 후 버튼 클릭 불가 문제 완전 해결** — HTMX(`unpkg.com`)·Alpine.js(`jsdelivr.net`)를 Docker 빌드 시 정적 파일로 내려받아 `/static/`에서 서빙, 외부 CDN JS 의존 완전 제거. `<script defer>`로 메인 스레드 블로킹 없음
+
 ## [26.3.2] - 2026-06-18
 
 ### Fixed
