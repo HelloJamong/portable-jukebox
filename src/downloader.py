@@ -98,6 +98,7 @@ def _run(task_id: str, url: str, fmt: str, quality: str, log_id: int, username: 
             TASKS[task_id].update(
                 {"status": "done", "progress": 100, "title": title, "filename": str(out)}
             )
+            threading.Timer(600, TASKS.pop, args=(task_id, None)).start()
             log = db.get(DownloadLog, log_id)
             if log:
                 log.status = "done"
@@ -117,6 +118,7 @@ def _run(task_id: str, url: str, fmt: str, quality: str, log_id: int, username: 
                 "error": str(exc),
                 "error_display": display_msg,
             })
+            threading.Timer(600, TASKS.pop, args=(task_id, None)).start()
             log = db.get(DownloadLog, log_id)
             if log:
                 log.status = "error"
