@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen bg-neutral-50">
+    <header class="w-full h-14 bg-white border-b border-neutral-200 flex items-center justify-between px-8">
+        <div class="flex items-center gap-8">
+            <span class="font-bold text-sm">
+                Portable-Jukebox <span class="text-neutral-400 font-normal ml-1">관리자</span>
+            </span>
+            <nav class="flex gap-1">
+                <a href="/admin/users"
+                    class="px-3 py-1.5 text-sm rounded-md transition-colors
+                    {% if '/admin/users' in request.url.path %}bg-neutral-100 font-medium{% else %}text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50{% endif %}">
+                    계정 관리
+                </a>
+                <a href="/admin/logs"
+                    class="px-3 py-1.5 text-sm rounded-md transition-colors
+                    {% if '/admin/logs' in request.url.path %}bg-neutral-100 font-medium{% else %}text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50{% endif %}">
+                    시스템 로그
+                </a>
+                <a href="/admin/settings"
+                    class="px-3 py-1.5 text-sm rounded-md transition-colors
+                    {% if '/admin/settings' in request.url.path %}bg-neutral-100 font-medium{% else %}text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50{% endif %}">
+                    설정
+                </a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-neutral-500">{{ user.username }} 님</span>
+            <a href="/change-password"
+                class="px-3 py-1.5 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer">
+                <i class="fa-solid fa-key text-neutral-400 text-xs mr-1.5"></i>비밀번호 변경
+            </a>
+            <a href="/logout"
+                class="px-3 py-1.5 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer">
+                <i class="fa-solid fa-right-from-bracket text-neutral-400 text-xs mr-1.5"></i>로그아웃
+            </a>
+        </div>
+    </header>
+    <main class="max-w-5xl mx-auto px-8 py-8">
+        {% block admin_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

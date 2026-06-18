@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}로그인 — Portable-Jukebox{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-neutral-50">
+    <div class="w-full max-w-sm">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold tracking-tight">Portable-Jukebox</h1>
+            <p class="text-sm text-neutral-500 mt-2">계정에 로그인하세요</p>
+        </div>
+        <div class="p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm">
+            {% if error %}
+            <div class="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+                <i class="fa-solid fa-circle-exclamation mr-1.5"></i>{{ error }}
+            </div>
+            {% endif %}
+            <form id="login-form" method="post" action="/login" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium mb-1.5 text-neutral-600">아이디</label>
+                    <input id="username" name="username" type="text" autocomplete="username" required
+                        class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-neutral-400 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1.5 text-neutral-600">비밀번호</label>
+                    <input name="password" type="password" autocomplete="current-password" required
+                        class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-neutral-400 text-sm">
+                </div>
+                <div class="flex items-center gap-6 pt-1">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input id="save-id" type="checkbox" class="w-4 h-4 rounded border-neutral-300 accent-neutral-900">
+                        <span class="text-sm text-neutral-600">아이디 저장</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input id="auto-login" name="auto_login" value="true" type="checkbox"
+                            class="w-4 h-4 rounded border-neutral-300 accent-neutral-900">
+                        <span class="text-sm text-neutral-600">자동 로그인</span>
+                    </label>
+                </div>
+                <button type="submit"
+                    class="w-full py-3 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors text-sm">
+                    로그인
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const usernameInput = document.getElementById('username');
+    const saveIdBox = document.getElementById('save-id');
+    const autoLoginBox = document.getElementById('auto-login');
+
+    // 저장된 값 복원
+    const savedId = localStorage.getItem('jb_saved_id');
+    if (savedId) {
+        usernameInput.value = savedId;
+        saveIdBox.checked = true;
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function () {
+        if (saveIdBox.checked) {
+            localStorage.setItem('jb_saved_id', usernameInput.value);
+        } else {
+            localStorage.removeItem('jb_saved_id');
+        }
+        // 자동 로그인 해제 시 체크박스 value 전송 안 되도록 (기본 동작 활용)
+    });
+</script>
+{% endblock %}

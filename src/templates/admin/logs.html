@@ -1,0 +1,102 @@
+{% extends "admin_base.html" %}
+{% block title %}시스템 로그 — 관리자{% endblock %}
+{% block admin_content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+        <h1 class="text-xl font-bold">시스템 로그</h1>
+        <div class="flex gap-2">
+            {% for key, label in [('', '전체'), ('auth', '인증'), ('download', '다운로드'), ('account', '계정 관리'), ('system', '시스템')] %}
+            <a href="/admin/logs{% if key %}?category={{ key }}{% endif %}"
+                class="px-3 py-1.5 text-xs rounded-md border transition-colors
+                {% if current_category == key %}bg-neutral-900 text-white border-neutral-900
+                {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">
+                {{ label }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-neutral-100 bg-neutral-50">
+                    <th class="text-left px-5 py-3 font-medium text-neutral-500 text-xs w-36">시각 (KST)</th>
+                    <th class="text-left px-5 py-3 font-medium text-neutral-500 text-xs w-28">구분</th>
+                    <th class="text-left px-5 py-3 font-medium text-neutral-500 text-xs w-24">사용자</th>
+                    <th class="text-left px-5 py-3 font-medium text-neutral-500 text-xs">상세</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100">
+                {% for log in logs %}
+                <tr class="hover:bg-neutral-50/50">
+                    <td class="px-5 py-3 text-xs text-neutral-400 whitespace-nowrap">
+                        {{ log.created_at.strftime('%Y.%m.%d %H:%M:%S') }}
+                    </td>
+                    <td class="px-5 py-3">
+                        {% if log.event_type == 'login_ok' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-green-50 text-green-700 border border-green-200">로그인</span>
+                        {% elif log.event_type == 'login_fail' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-red-50 text-red-600 border border-red-200">로그인 실패</span>
+                        {% elif log.event_type == 'logout' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-neutral-100 text-neutral-500 border border-neutral-200">로그아웃</span>
+                        {% elif log.event_type == 'password_change' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-neutral-100 text-neutral-600 border border-neutral-200">비밀번호 변경</span>
+                        {% elif log.event_type == 'download_done' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-blue-50 text-blue-600 border border-blue-200">다운로드 완료</span>
+                        {% elif log.event_type == 'download_fail' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-red-50 text-red-600 border border-red-200">다운로드 실패</span>
+                        {% elif log.event_type == 'user_create' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-green-50 text-green-700 border border-green-200">계정 생성</span>
+                        {% elif log.event_type == 'user_delete' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-red-50 text-red-600 border border-red-200">계정 삭제</span>
+                        {% elif log.event_type == 'settings_change' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-purple-50 text-purple-600 border border-purple-200">설정 변경</span>
+                        {% elif log.event_type == 'auto_delete' %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-orange-50 text-orange-600 border border-orange-200">자동 삭제</span>
+                        {% else %}
+                        <span class="text-xs px-2 py-0.5 rounded-full whitespace-nowrap bg-neutral-100 text-neutral-400 border border-neutral-200">{{ log.event_type }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-3 text-neutral-600 text-xs">{{ log.username or '—' }}</td>
+                    <td class="px-5 py-3 text-xs text-neutral-500">
+                        {% set d = log.detail | fromjson %}
+                        {% if log.event_type in ('login_ok', 'login_fail') %}
+                            IP: {{ d.get('ip', '—') }}
+                        {% elif log.event_type == 'download_done' %}
+                            <span class="font-medium text-neutral-700">{{ d.get('title') or d.get('url', '—') }}</span>
+                            <span class="ml-2 text-neutral-400">{{ d.get('format', '').upper() }} · {{ d.get('quality', '') }}</span>
+                        {% elif log.event_type == 'download_fail' %}
+                            <span class="text-red-500 font-medium">{{ d.get('error_display', '오류') }}</span>
+                            <div class="mt-0.5 text-neutral-400 break-all">{{ d.get('url', '') }}</div>
+                        {% elif log.event_type == 'auto_delete' %}
+                            <span class="font-medium text-neutral-700">{{ d.get('filename', '—') }}</span>
+                            <span class="ml-2 text-neutral-400">{{ d.get('reason', '') }}</span>
+                        {% elif log.event_type == 'settings_change' %}
+                            {% for key, val in d.get('changed', {}).items() %}
+                            <span class="mr-3"><span class="font-medium text-neutral-700">{{ key }}</span>: {{ val.get('from', '?') }} → {{ val.get('to', '?') }}</span>
+                            {% endfor %}
+                        {% elif log.event_type == 'user_create' %}
+                            <span class="font-medium text-neutral-700">{{ d.get('target', '—') }}</span> 계정 생성 · 권한: {{ d.get('role', '') }}
+                        {% elif log.event_type == 'user_delete' %}
+                            <span class="font-medium text-neutral-700">{{ d.get('target', '—') }}</span> 계정 삭제
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="px-5 py-12 text-center text-sm text-neutral-400">
+                        <i class="fa-solid fa-inbox text-2xl mb-2 block"></i>로그가 없습니다.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if total > limit %}
+    <p class="text-xs text-neutral-400 text-center">최근 {{ limit }}건 표시 중 (전체 {{ total }}건)</p>
+    {% endif %}
+</div>
+{% endblock %}

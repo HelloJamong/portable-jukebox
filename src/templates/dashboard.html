@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Portable-Jukebox{% endblock %}
+{% block content %}
+<div class="relative w-full max-w-[1440px] min-h-screen bg-white border border-neutral-200 mx-auto flex flex-col">
+
+    <header class="sticky top-0 z-50 w-full h-20 bg-white flex items-center justify-end px-10 border-b border-neutral-100">
+        <div class="flex items-center gap-4">
+            <span class="text-sm font-medium">{{ user.username }} 님</span>
+            <a href="/change-password"
+                class="px-4 py-2 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer">
+                <i class="fa-solid fa-key text-neutral-500 mr-2"></i>비밀번호 변경
+            </a>
+            <a href="/logout"
+                class="px-4 py-2 text-sm border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer">
+                <i class="fa-solid fa-right-from-bracket text-neutral-500 mr-2"></i>로그아웃
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center pt-24 pb-20">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold tracking-tight mb-4">Portable-Jukebox</h1>
+            <p class="text-neutral-500">원하는 유튜브 영상의 링크를 입력하여 간편하게 다운로드하세요.</p>
+        </div>
+
+        <!-- Download Card -->
+        <section class="w-full max-w-[800px] p-8 border border-neutral-200 rounded-2xl shadow-sm bg-white"
+            x-data="{
+                fmt: 'mp4',
+                mp4Quality: ['1080p (FHD)', '720p (HD)', '480p', '360p'],
+                mp3Quality: ['320kbps', '192kbps', '128kbps', '96kbps'],
+                get qualities() { return this.fmt === 'mp4' ? this.mp4Quality : this.mp3Quality }
+            }">
+            <form hx-post="/download" hx-target="#progress-container" hx-swap="innerHTML">
+                <div class="mb-8">
+                    <label class="block text-sm font-medium mb-2 text-neutral-600">유튜브 URL</label>
+                    <div class="relative">
+                        <input type="text" name="url"
+                            placeholder="https://www.youtube.com/watch?v=..."
+                            class="w-full px-4 py-4 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-neutral-400 text-lg">
+                        <i class="fa-solid fa-link absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-neutral-600">파일 형식</label>
+                        <input type="hidden" name="format" :value="fmt">
+                        <div class="flex p-1 bg-neutral-100 rounded-lg">
+                            <button type="button" @click="fmt='mp4'"
+                                :class="fmt === 'mp4' ? 'bg-white shadow-sm text-neutral-900' : 'text-neutral-500 hover:text-neutral-900'"
+                                class="flex-1 py-2 text-sm font-medium rounded-md transition-all">
+                                영상 (MP4)
+                            </button>
+                            <button type="button" @click="fmt='mp3'"
+                                :class="fmt === 'mp3' ? 'bg-white shadow-sm text-neutral-900' : 'text-neutral-500 hover:text-neutral-900'"
+                                class="flex-1 py-2 text-sm font-medium rounded-md transition-all">
+                                음악 (MP3)
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-neutral-600"
+                            x-text="fmt === 'mp4' ? '해상도' : '음질'">해상도</label>
+                        <div class="relative">
+                            <select name="quality"
+                                class="w-full px-4 py-2.5 bg-white border border-neutral-200 rounded-lg appearance-none focus:outline-none focus:ring-1 focus:ring-neutral-400 text-sm">
+                                <template x-for="q in qualities" :key="q">
+                                    <option :value="q" x-text="q"></option>
+                                </template>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 text-xs pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <button type="submit"
+                        class="w-full py-4 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-download"></i>
+                        다운로드 시작
+                    </button>
+                    <div id="progress-container"></div>
+                </div>
+            </form>
+        </section>
+
+        <!-- History -->
+        <section class="w-full max-w-[800px] mt-16">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold">최근 다운로드 내역</h2>
+            </div>
+
+            <div id="history-list" class="space-y-3">
+                {% include "partials/history_list.html" %}
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-10 border-t border-neutral-100 text-center">
+        <p class="text-xs text-neutral-400">© 2026 Vinsign Portable-Jukebox Service. All rights reserved.</p>
+    </footer>
+</div>
+{% endblock %}
