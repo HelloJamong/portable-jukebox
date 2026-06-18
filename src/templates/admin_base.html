@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="min-h-screen bg-neutral-50">
+<div class="min-h-screen bg-neutral-50 flex flex-col">
     <header class="sticky top-0 z-50 w-full h-14 bg-white border-b border-neutral-200 flex items-center justify-between px-8">
         <div class="flex items-center gap-8">
             <div class="flex items-center gap-2">
@@ -43,11 +43,16 @@
             </form>
         </div>
     </header>
-    <main class="max-w-5xl mx-auto px-8 py-8">
+    <main class="flex-1 max-w-5xl mx-auto px-8 py-8">
         {% block admin_content %}{% endblock %}
     </main>
-    <footer class="py-6 px-8 border-t border-neutral-200">
-        <span class="text-xs text-neutral-300">Release-v{{ app_version }}</span>
+    <footer class="py-6 px-8 border-t border-neutral-200 flex items-center justify-between">
+        <span class="text-xs text-neutral-300">Release-{{ app_version }}</span>
+        <p class="text-xs text-neutral-400">© 2026 Portable-Jukebox Service. All rights reserved.</p>
+        <a href="https://github.com/HelloJamong/portable-jukebox" target="_blank" rel="noopener"
+            class="text-neutral-300 hover:text-neutral-500 transition-colors">
+            <i class="fa-brands fa-github text-base"></i>
+        </a>
     </footer>
 </div>
 {% endblock %}

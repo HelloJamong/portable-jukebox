@@ -1,5 +1,14 @@
 # Changelog
 
+## [26.5.1] - 2026-06-18
+
+### Fixed
+- **푸터 이중 v 제거** — `APP_VERSION`이 이미 `v` 접두사를 포함하고 있어 `Release-vv26.x.x`로 표시되던 문제 수정 (`Release-v{{ app_version }}` → `Release-{{ app_version }}`)
+- **관리자 푸터 위치 수정** — 관리자 페이지 outer div에 `flex flex-col`, `<main>`에 `flex-1` 추가로 콘텐츠가 적을 때 푸터가 화면 하단에 고정되도록 수정
+
+### Changed
+- **푸터 통일** — 사용자/관리자 푸터를 `Release-버전 / © 2026 Portable-Jukebox Service. All rights reserved. / GitHub 아이콘` 구조로 통일
+
 ## [26.5.0] - 2026-06-18
 
 ### Added

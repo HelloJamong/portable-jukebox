@@ -109,8 +109,12 @@
     </main>
 
     <footer class="py-10 border-t border-neutral-100 flex items-center justify-between px-10">
-        <span class="text-xs text-neutral-300">Release-v{{ app_version }}</span>
+        <span class="text-xs text-neutral-300">Release-{{ app_version }}</span>
         <p class="text-xs text-neutral-400">© 2026 Portable-Jukebox Service. All rights reserved.</p>
+        <a href="https://github.com/HelloJamong/portable-jukebox" target="_blank" rel="noopener"
+            class="text-neutral-300 hover:text-neutral-500 transition-colors">
+            <i class="fa-brands fa-github text-base"></i>
+        </a>
     </footer>
 </div>
 {% endblock %}
