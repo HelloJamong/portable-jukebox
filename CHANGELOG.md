@@ -1,5 +1,10 @@
 # Changelog
 
+## [26.3.2] - 2026-06-18
+
+### Fixed
+- `user.py`에 `import os` 누락으로 컨테이너 시작 시 `NameError` 발생하던 문제 수정
+
 ## [26.3.1] - 2026-06-18
 
 ### Added
