@@ -41,6 +41,7 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
+          provenance: false
           build-args: |
             VERSION=${{ steps.version.outputs.version }}
           tags: |

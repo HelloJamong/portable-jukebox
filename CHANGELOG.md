@@ -1,5 +1,10 @@
 # Changelog
 
+## [26.5.7] - 2026-06-19
+
+### Fixed
+- **Synology Container Manager 이미지 업데이트 미감지 수정** — `docker/build-push-action@v5`의 기본 provenance attestation으로 인해 OCI image index 형식으로 push되어 Synology가 digest 비교에 실패하던 문제 수정. `provenance: false` 옵션 추가로 단순 단일 플랫폼 manifest로 push되도록 변경
+
 ## [26.5.6] - 2026-06-18
 
 ### Fixed
