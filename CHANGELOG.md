@@ -1,5 +1,11 @@
 # Changelog
 
+## [26.5.4] - 2026-06-18
+
+### Fixed
+- **다운로드 진행률 0% 고착 수정** — yt-dlp가 `total_bytes`를 제공하지 않을 때 진행률이 항상 0%로 고착되던 문제 수정. yt-dlp 자체 계산값(`_percent_str`)을 1순위로 사용하도록 변경, `total_bytes` 없이도 실제 진행률 표시
+- **다운로드 완료 후 이력 미갱신 수정** — 다운로드 완료 시 DB 커밋 전에 `TASKS["done"]`이 설정되는 race condition 수정. DB 커밋 후 TASKS 상태 변경으로 순서 변경, HTMX OOB swap으로 이력이 즉시 갱신됨
+
 ## [26.5.3] - 2026-06-18
 
 ### Fixed

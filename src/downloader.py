@@ -51,9 +51,13 @@ def _make_opts(fmt: str, quality: str, task_id: str) -> dict:
 
     def hook(d: dict) -> None:
         if d["status"] == "downloading":
-            total = d.get("total_bytes") or d.get("total_bytes_estimate", 0)
-            done = d.get("downloaded_bytes", 0)
-            TASKS[task_id]["progress"] = int(done / total * 100) if total else 0
+            pct_str = d.get("_percent_str", "").strip().rstrip("%")
+            try:
+                TASKS[task_id]["progress"] = min(99, int(float(pct_str)))
+            except (ValueError, TypeError):
+                total = d.get("total_bytes") or d.get("total_bytes_estimate", 0)
+                done = d.get("downloaded_bytes", 0)
+                TASKS[task_id]["progress"] = int(done / total * 100) if total else 0
             TASKS[task_id]["status"] = "downloading"
 
     base: dict = {
@@ -95,10 +99,6 @@ def _run(task_id: str, url: str, fmt: str, quality: str, log_id: int, username: 
 
             file_size = out.stat().st_size if out.exists() else None
 
-            TASKS[task_id].update(
-                {"status": "done", "progress": 100, "title": title, "filename": str(out)}
-            )
-            threading.Timer(600, TASKS.pop, args=(task_id, None)).start()
             log = db.get(DownloadLog, log_id)
             if log:
                 log.status = "done"
@@ -110,6 +110,10 @@ def _run(task_id: str, url: str, fmt: str, quality: str, log_id: int, username: 
                 "format": fmt, "quality": quality,
             }, db=db)
             db.commit()
+            TASKS[task_id].update(
+                {"status": "done", "progress": 100, "title": title, "filename": str(out)}
+            )
+            threading.Timer(600, TASKS.pop, args=(task_id, None)).start()
 
         except Exception as exc:
             display_msg, error_type = _classify_error(exc)
