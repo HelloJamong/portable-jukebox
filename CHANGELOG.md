@@ -1,5 +1,14 @@
 # Changelog
 
+## [26.5.2] - 2026-06-18
+
+### Fixed
+- **Bitwarden 알림 바 완전 차단** — `autocomplete="off"`를 form 레벨뿐만 아니라 username·password 개별 필드에도 적용. MutationObserver로 `#bit-notification-bar` DOM 주입 즉시 제거해 클릭 차단 문제 근본 해결
+
+### Changed
+- **시스템 로그 페이지당 표시 수 선택 UI 변경** — 버튼 그룹 → 드롭다운 셀렉트로 교체
+- **관리자 페이지 콘텐츠 폭 유동화** — `max-w-5xl` 고정 폭 제거, 화면 너비에 따라 자동 확장되도록 수정
+
 ## [26.5.1] - 2026-06-18
 
 ### Fixed

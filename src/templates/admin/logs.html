@@ -17,17 +17,12 @@
                 </a>
                 {% endfor %}
             </div>
-            <div class="flex items-center gap-1">
-                <span class="text-xs text-neutral-400 mr-1">표시</span>
+            <select onchange="location.href='{{ base }}per_page='+this.value+'&page=1'"
+                class="px-2.5 py-1.5 text-xs border border-neutral-200 rounded-md text-neutral-500 bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-neutral-400">
                 {% for n in [20, 30, 50, 100] %}
-                <a href="{{ base }}per_page={{ n }}&page=1"
-                    class="px-2.5 py-1.5 text-xs rounded-md border transition-colors
-                    {% if per_page == n %}bg-neutral-900 text-white border-neutral-900
-                    {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">
-                    {{ n }}
-                </a>
+                <option value="{{ n }}" {% if per_page == n %}selected{% endif %}>{{ n }}개씩 보기</option>
                 {% endfor %}
-            </div>
+            </select>
         </div>
     </div>
 
