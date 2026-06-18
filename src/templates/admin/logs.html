@@ -1,18 +1,33 @@
 {% extends "admin_base.html" %}
 {% block title %}시스템 로그 — 관리자{% endblock %}
 {% block admin_content %}
+{% set base = '/admin/logs?' %}
+{% if current_category %}{% set base = base + 'category=' + current_category + '&' %}{% endif %}
 <div class="space-y-6">
     <div class="flex items-center justify-between flex-wrap gap-3">
         <h1 class="text-xl font-bold">시스템 로그</h1>
-        <div class="flex gap-2">
-            {% for key, label in [('', '전체'), ('auth', '인증'), ('download', '다운로드'), ('account', '계정 관리'), ('system', '시스템')] %}
-            <a href="/admin/logs{% if key %}?category={{ key }}{% endif %}"
-                class="px-3 py-1.5 text-xs rounded-md border transition-colors
-                {% if current_category == key %}bg-neutral-900 text-white border-neutral-900
-                {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">
-                {{ label }}
-            </a>
-            {% endfor %}
+        <div class="flex items-center gap-3 flex-wrap">
+            <div class="flex gap-2">
+                {% for key, label in [('', '전체'), ('auth', '인증'), ('download', '다운로드'), ('account', '계정 관리'), ('system', '시스템')] %}
+                <a href="/admin/logs{% if key %}?category={{ key }}&per_page={{ per_page }}{% else %}?per_page={{ per_page }}{% endif %}"
+                    class="px-3 py-1.5 text-xs rounded-md border transition-colors
+                    {% if current_category == key %}bg-neutral-900 text-white border-neutral-900
+                    {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">
+                    {{ label }}
+                </a>
+                {% endfor %}
+            </div>
+            <div class="flex items-center gap-1">
+                <span class="text-xs text-neutral-400 mr-1">표시</span>
+                {% for n in [20, 30, 50, 100] %}
+                <a href="{{ base }}per_page={{ n }}&page=1"
+                    class="px-2.5 py-1.5 text-xs rounded-md border transition-colors
+                    {% if per_page == n %}bg-neutral-900 text-white border-neutral-900
+                    {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">
+                    {{ n }}
+                </a>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
@@ -95,8 +110,44 @@
         </table>
     </div>
 
-    {% if total > limit %}
-    <p class="text-xs text-neutral-400 text-center">최근 {{ limit }}건 표시 중 (전체 {{ total }}건)</p>
-    {% endif %}
+    <div class="flex items-center justify-between flex-wrap gap-4">
+        <p class="text-xs text-neutral-400">전체 {{ total }}건 · {{ page }}/{{ total_pages }} 페이지</p>
+        {% if total_pages > 1 %}
+        {% set ws = [2, page - 2] | max %}
+        {% set we = [total_pages - 1, page + 2] | min %}
+        <div class="flex items-center gap-1">
+            <a href="{{ base }}per_page={{ per_page }}&page={{ page - 1 }}"
+                class="px-3 py-1.5 text-xs border rounded-md transition-colors
+                {% if page == 1 %}border-neutral-100 text-neutral-300 pointer-events-none
+                {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">
+                <i class="fa-solid fa-chevron-left text-xs"></i>
+            </a>
+            <a href="{{ base }}per_page={{ per_page }}&page=1"
+                class="px-3 py-1.5 text-xs border rounded-md transition-colors
+                {% if page == 1 %}bg-neutral-900 text-white border-neutral-900
+                {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">1</a>
+            {% if ws > 2 %}<span class="px-1 text-xs text-neutral-300">…</span>{% endif %}
+            {% for p in range(ws, we + 1) %}
+            <a href="{{ base }}per_page={{ per_page }}&page={{ p }}"
+                class="px-3 py-1.5 text-xs border rounded-md transition-colors
+                {% if p == page %}bg-neutral-900 text-white border-neutral-900
+                {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">{{ p }}</a>
+            {% endfor %}
+            {% if we < total_pages - 1 %}<span class="px-1 text-xs text-neutral-300">…</span>{% endif %}
+            {% if total_pages > 1 %}
+            <a href="{{ base }}per_page={{ per_page }}&page={{ total_pages }}"
+                class="px-3 py-1.5 text-xs border rounded-md transition-colors
+                {% if page == total_pages %}bg-neutral-900 text-white border-neutral-900
+                {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">{{ total_pages }}</a>
+            {% endif %}
+            <a href="{{ base }}per_page={{ per_page }}&page={{ page + 1 }}"
+                class="px-3 py-1.5 text-xs border rounded-md transition-colors
+                {% if page == total_pages %}border-neutral-100 text-neutral-300 pointer-events-none
+                {% else %}border-neutral-200 text-neutral-500 hover:bg-neutral-50{% endif %}">
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

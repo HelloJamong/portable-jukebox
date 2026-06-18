@@ -81,18 +81,24 @@ _CATEGORY_TYPES = {
 async def admin_logs(
     request: Request,
     category: str = Query(default=""),
+    page: int = Query(default=1, ge=1),
+    per_page: int = Query(default=30),
     db: Session = Depends(get_db),
     admin: User = Depends(require_admin),
 ):
-    limit = 200
+    if per_page not in (20, 30, 50, 100):
+        per_page = 30
     q = db.query(ActivityLog)
     if category in _CATEGORY_TYPES:
         q = q.filter(ActivityLog.event_type.in_(_CATEGORY_TYPES[category]))
     total = q.count()
-    logs = q.order_by(ActivityLog.created_at.desc()).limit(limit).all()
+    total_pages = max(1, (total + per_page - 1) // per_page)
+    page = min(page, total_pages)
+    logs = q.order_by(ActivityLog.created_at.desc()).limit(per_page).offset((page - 1) * per_page).all()
     return templates.TemplateResponse(request, "admin/logs.html", {
         "user": admin, "logs": logs,
-        "current_category": category, "total": total, "limit": limit,
+        "current_category": category, "total": total,
+        "page": page, "per_page": per_page, "total_pages": total_pages,
     })
 
 
