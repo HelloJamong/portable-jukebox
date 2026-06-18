@@ -37,15 +37,27 @@
 ### Docker Compose (권장)
 
 ```bash
-# 1. 환경 변수 설정
-cp .env.example .env
-# .env 파일에서 SECRET_KEY, ADMIN_USERNAME, ADMIN_PASSWORD 수정
+# 1. 설정 파일 다운로드
+curl -L https://github.com/HelloJamong/portable-jukebox/releases/latest/download/docker-compose.yml -o docker-compose.yml
+curl -L https://github.com/HelloJamong/portable-jukebox/releases/latest/download/default.env.example -o .env
 
-# 2. 실행
+# 2. 필수 디렉터리 생성
+mkdir -p downloads data
+
+# 3. .env 수정 (SECRET_KEY, ADMIN_USERNAME, ADMIN_PASSWORD 변경 필수)
+nano .env
+
+# 4. 실행
 docker compose up -d
 ```
 
 브라우저에서 `http://localhost:8000` 접속 후 관리자 계정으로 로그인합니다.
+
+> **필수 디렉터리**
+> | 경로 | 용도 |
+> |---|---|
+> | `./downloads` | 다운로드 파일 저장소 |
+> | `./data` | SQLite 데이터베이스 저장소 |
 
 ### 이미지 업데이트
 
