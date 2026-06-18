@@ -1,5 +1,12 @@
 # Changelog
 
+## [26.2.0] - 2026-06-18
+
+### Added
+- **파일 직접 다운로드** — `GET /files/{filename}` 엔드포인트 추가, 파일 목록에서 브라우저로 직접 전송 (path traversal 방어 포함)
+- **테스트 커버리지** — `test_auth.py` 확장(로그인 흐름·권한·복잡성 검증), `test_downloader.py`·`test_scheduler.py` 신규 작성 (총 16개)
+- **Alembic 마이그레이션** — 초기 스키마 리비전 생성, `alembic upgrade head` 적용
+
 ## [26.1.1] - 2026-06-18
 
 ### Fixed

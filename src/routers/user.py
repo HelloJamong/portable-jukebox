@@ -3,8 +3,8 @@ import secrets
 from datetime import timedelta
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, Form, Request
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
@@ -248,6 +248,19 @@ async def download_status(
         f'<i class="fa-solid fa-circle-exclamation"></i><span>{msg}</span>'
         "</div></div>"
     )
+
+
+@router.get("/files/{filename}")
+async def serve_file(
+    filename: str,
+    user: User = Depends(get_current_user),
+):
+    if ".." in filename or filename.startswith("/"):
+        raise HTTPException(status_code=400, detail="잘못된 파일명입니다.")
+    path = downloader.DOWNLOAD_DIR / filename
+    if not path.exists() or not path.is_file():
+        raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다.")
+    return FileResponse(path, filename=filename, media_type="application/octet-stream")
 
 
 def _progress_html(task_id: str, progress: int, status: str) -> str:

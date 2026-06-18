@@ -82,7 +82,7 @@ portable-jukebox/
 │           ├── users.html
 │           ├── logs.html
 │           └── settings.html
-├── alembic/                 # DB 마이그레이션 (미구현, TODO)
+├── alembic/                 # DB 마이그레이션 (Alembic)
 ├── tests/
 │   └── test_auth.py
 ├── Dockerfile
@@ -124,6 +124,7 @@ portable-jukebox/
 - `POST /download` — 다운로드 요청 (url, format, quality)
 - `GET /download/status/{task_id}` — 진행률 폴링 (HTMX 2초 간격)
 - `GET/POST /change-password` — 비밀번호 변경 (최초 로그인 시 강제)
+- `GET /files/{filename}` — 파일 다운로드 (로그인 필요, `FileResponse` 반환, path traversal 방어)
 
 ### 관리자 (`role=admin` 필요)
 - `GET /admin/users` — 계정 목록
@@ -207,10 +208,31 @@ async def start_download(
 ## Testing Strategy
 
 - **프레임워크**: pytest + httpx (FastAPI TestClient)
-- **커버리지 대상**: auth 흐름, downloader 래퍼, scheduler 삭제 로직
-- **DB**: 테스트용 인메모리 SQLite
+- **DB**: 테스트용 인메모리 SQLite (`sqlite:///:memory:`)
 - **yt-dlp**: mock (실제 네트워크 호출 불필요)
 - 실행: `uv run pytest`
+
+### test_auth.py (부분 구현)
+- [x] `test_password_round_trip` — bcrypt 해싱/검증
+- [x] `test_login_success` — 올바른 자격증명 → 세션 생성, 302 리다이렉트
+- [ ] `test_login_fail` — 잘못된 비밀번호 → 401, `login_fail` ActivityLog 기록
+- [ ] `test_login_redirects_admin` — admin 로그인 → `/admin/users` 리다이렉트
+- [ ] `test_must_change_password` — `must_change_password=True` → `/change-password` 강제
+- [ ] `test_require_login_redirect` — 비로그인 상태 `/` 접근 → `/login` 리다이렉트
+- [ ] `test_require_admin_forbidden` — 일반 유저 `/admin/*` 접근 → 403
+- [ ] `test_password_complexity` — 복잡성 규칙 위반 시 에러 메시지 반환
+
+### test_downloader.py (미작성)
+- [ ] `test_classify_error_invalid_url` — URL 오류 분류 검증
+- [ ] `test_classify_error_private` — 비공개 영상 분류 검증
+- [ ] `test_classify_error_network` — 네트워크 오류 분류 검증
+- [ ] `test_enqueue_returns_task_id` — `enqueue()` 호출 → UUID 형식 task_id 반환
+- [ ] `test_task_cleanup` — done/error 후 10분 뒤 TASKS에서 제거 (Timer mock)
+
+### test_scheduler.py (미작성)
+- [ ] `test_skip_when_retention_zero` — `retention_days=0` → 파일 삭제 안 함
+- [ ] `test_delete_expired` — 기한 초과 파일 삭제 + `deleted_at` 업데이트 + `auto_delete` 로그 기록
+- [ ] `test_skip_not_expired` — 기한 미초과 파일은 보존
 
 ---
 
@@ -226,7 +248,7 @@ async def start_download(
 
 1. **초기 관리자 계정**: ✅ `.env`의 `ADMIN_USERNAME` / `ADMIN_PASSWORD`로 앱 최초 실행 시 자동 생성
 2. **동시 다운로드 제한**: ✅ 전체 3개로 결정 및 구현
-3. **파일 브라우저**: 저장 파일 목록에서 직접 다운로드(브라우저로 전송) 기능 필요? → 미구현, 필요 시 추가
+3. **파일 브라우저**: ✅ `GET /files/{filename}` 구현 예정 — API Routes 명세 확정
 
 ---
 
@@ -252,3 +274,8 @@ async def start_download(
 - [x] docker-compose.yml (app + watchtower)
 - [x] GitHub Actions CI/CD (EE-ONE-D 패턴)
 - [x] .env.example, CHANGELOG.md 초기화
+
+### Phase 5 — 미구현 항목
+- [x] 파일 직접 다운로드 — `GET /files/{filename}` (FileResponse, path traversal 방어)
+- [x] 테스트 커버리지 — `test_auth.py` 확장 + `test_downloader.py` + `test_scheduler.py` 신규 작성
+- [x] Alembic 마이그레이션 — `alembic init`, 초기 리비전, `uv run alembic upgrade head`
