@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, Form, Query, Request
@@ -14,6 +15,7 @@ from ..models import ActivityLog, AppSetting, DownloadLog, User
 router = APIRouter()
 templates = Jinja2Templates(directory=Path(__file__).parent.parent / "templates")
 templates.env.filters["fromjson"] = json.loads
+templates.env.globals["app_version"] = os.getenv("APP_VERSION", "dev")
 
 
 @router.get("/", response_class=HTMLResponse)

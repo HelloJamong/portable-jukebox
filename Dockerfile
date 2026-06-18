@@ -22,6 +22,7 @@ RUN pip install --no-cache-dir . \
 FROM python:3.12-slim AS runner
 ARG VERSION=latest
 LABEL org.opencontainers.image.version="${VERSION}"
+ENV APP_VERSION=${VERSION}
 WORKDIR /app
 
 RUN apt-get update \

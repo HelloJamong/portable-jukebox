@@ -17,6 +17,7 @@ from ..models import _now_kst
 
 router = APIRouter()
 templates = Jinja2Templates(directory=Path(__file__).parent.parent / "templates")
+templates.env.globals["app_version"] = os.getenv("APP_VERSION", "dev")
 
 _COOKIE = "jb_remember"
 _TOKEN_DAYS = 30
