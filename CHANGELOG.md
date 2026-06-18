@@ -1,5 +1,13 @@
 # Changelog
 
+## [26.4.2] - 2026-06-18
+
+### Fixed
+- **로그인 후 헤더 버튼 클릭 불가 근본 원인 수정** — 세 가지 원인 동시 해결
+  1. HTMX `historyEnabled: false` — 이전 방문 시 저장된 page snapshot이 로그인 후 복원되며 폴링을 재개시켜 탭 스피너·이벤트 간섭을 유발하던 문제 제거
+  2. 관리자 헤더에 `sticky top-0 z-50` 추가 — z-index 없던 헤더가 `<main>` 요소에 가려지던 stacking context 문제 해결 (사용자 헤더와 동일하게 맞춤)
+  3. HTML 응답에 `Cache-Control: no-store` 미들웨어 추가 — 브라우저 bfcache가 이전 페이지 상태를 재사용하지 못하도록 차단
+
 ## [26.4.1] - 2026-06-18
 
 ### Fixed
