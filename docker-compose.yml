@@ -10,10 +10,3 @@ services:
       - "8000:8000"
     restart: unless-stopped
 
-  watchtower:
-    image: containrrr/watchtower
-    container_name: portable-jukebox-watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 300 portable-jukebox-app
-    restart: unless-stopped
