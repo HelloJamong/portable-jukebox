@@ -1,5 +1,14 @@
 # Changelog
 
+## [26.5.8] - 2026-06-19
+
+### Fixed
+- **다운로드 프로그레스 바 미표시 수정** — `_progress_html`이 Python 코드에서 동적으로 HTML을 생성해 `h-2`, `h-full`, `animate-pulse`, `bg-neutral-400`, `mb-1.5` 등 Tailwind 클래스가 빌드 스캔에서 누락됨. `partials/progress.html` 템플릿으로 이전하여 해결
+- **프로그레스 폴링 1회 후 중단 수정** — HTMX 2.x에서 `hx-swap="outerHTML"`로 자기 자신을 교체하면 새 요소의 `hx-trigger="every 2s"`가 재초기화되지 않는 문제. 안정적 상위 컨테이너(`#progress-container`)를 타겟으로 변경하여 해결
+- **다운로드 완료 후 목록 미갱신 수정** — HTMX 2.x에서 `hx-swap-oob`가 의도대로 동작하지 않아 완료 후 히스토리가 자동 갱신되지 않던 문제. `hx-trigger="load"`로 방식 변경
+- **진행률 역행 수정** — yt-dlp가 video/audio 스트림을 순차 다운로드할 때 스트림 전환 시 진행률이 0으로 리셋되던 문제. `max()` 적용으로 단조증가 보장
+- **ffmpeg 경로 지정 추가** — `FFMPEG_LOCATION` 환경변수로 ffmpeg 위치를 명시 지정 가능하도록 추가 (미설정 시 PATH 탐색)
+
 ## [26.5.7] - 2026-06-19
 
 ### Fixed

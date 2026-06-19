@@ -53,18 +53,22 @@ def _make_opts(fmt: str, quality: str, task_id: str) -> dict:
         if d["status"] == "downloading":
             pct_str = d.get("_percent_str", "").strip().rstrip("%")
             try:
-                TASKS[task_id]["progress"] = min(99, int(float(pct_str)))
+                new_progress = min(99, int(float(pct_str)))
             except (ValueError, TypeError):
                 total = d.get("total_bytes") or d.get("total_bytes_estimate", 0)
                 done = d.get("downloaded_bytes", 0)
-                TASKS[task_id]["progress"] = int(done / total * 100) if total else 0
+                new_progress = int(done / total * 100) if total else 0
+            # ponytail: max() prevents progress jumping backward when yt-dlp resets per stream
+            TASKS[task_id]["progress"] = max(TASKS[task_id]["progress"], new_progress)
             TASKS[task_id]["status"] = "downloading"
 
+    ffmpeg_path = os.getenv("FFMPEG_LOCATION", "ffmpeg")
     base: dict = {
         "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s"),
         "progress_hooks": [hook],
         "quiet": True,
         "no_warnings": True,
+        "ffmpeg_location": ffmpeg_path,
     }
 
     if fmt == "mp4":
