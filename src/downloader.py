@@ -62,14 +62,15 @@ def _make_opts(fmt: str, quality: str, task_id: str) -> dict:
             TASKS[task_id]["progress"] = max(TASKS[task_id]["progress"], new_progress)
             TASKS[task_id]["status"] = "downloading"
 
-    ffmpeg_path = os.getenv("FFMPEG_LOCATION", "ffmpeg")
     base: dict = {
         "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s"),
         "progress_hooks": [hook],
         "quiet": True,
         "no_warnings": True,
-        "ffmpeg_location": ffmpeg_path,
     }
+    # ponytail: only set when env var present; omitting lets yt-dlp search PATH (needed in Docker)
+    if ffmpeg_path := os.getenv("FFMPEG_LOCATION"):
+        base["ffmpeg_location"] = ffmpeg_path
 
     if fmt == "mp4":
         h = _MP4_HEIGHTS.get(quality, 1080)

@@ -1,5 +1,13 @@
 # Changelog
 
+## [26.5.9] - 2026-06-19
+
+### Fixed
+- **Docker 환경 FFmpeg 탐색 오류 수정** — `FFMPEG_LOCATION` 미설정 시 `ffmpeg_location` 옵션에 `"ffmpeg"` 문자열을 넣어 PATH 탐색이 아닌 현재 디렉터리 탐색으로 동작하던 문제. 환경변수 미설정 시 옵션 자체를 생략하도록 변경하여 Docker 컨테이너에서 apt 설치된 ffmpeg를 정상 탐색
+
+### Added
+- **README 소개 이미지 추가** — `src/img/intro.png`, `src/img/sample.PNG` 파일 git 추가
+
 ## [26.5.8] - 2026-06-19
 
 ### Fixed
