@@ -1,5 +1,7 @@
 # Portable-Jukebox
 
+<img src="src/img/intro.png" alt="Portable-Jukebox 소개" width="100%">
+
 자가 호스팅 YouTube 다운로더 웹 서비스. 원하는 영상과 음악을 서버에 직접 저장하고 관리합니다.
 
 ## 만든 이유
@@ -7,6 +9,8 @@
 유튜브 영상이나 음악을 다운로드할 때 서드파티 사이트는 광고가 넘치고, 로컬 CLI 도구는 가족이나 팀원이 쓰기 불편합니다. Portable-Jukebox는 내 서버에 직접 올려두고, 누구나 브라우저에서 링크만 붙여넣으면 파일을 내려받을 수 있도록 만들었습니다. 계정 관리와 자동 정리 기능도 있어 NAS나 홈 서버에 올려두고 가족이나 팀원과 함께 쓰기에 적합합니다.
 
 ## 주요 기능
+
+<img src="src/img/sample.PNG" alt="Portable-Jukebox UI" width="100%">
 
 - **YouTube 다운로드** — MP4(1080p/720p/480p/360p) 및 MP3(320/192/128/96kbps) 지원
 - **실시간 진행률** — HTMX 폴링 기반 다운로드 상태 표시
