@@ -64,16 +64,34 @@ async def delete_user(
 ):
     target = db.get(User, user_id)
     if target and target.id != admin.id:
-        target.is_active = False
         log_event("user_delete", username=admin.username, detail={"target": target.username}, db=db)
+        target.is_active = False
+        target.username = f"{target.username}__deleted_{target.id}"
         db.commit()
     return HTMLResponse("")  # HTMX removes the row via hx-swap="outerHTML"
+
+
+@router.post("/users/{user_id}/reset-password")
+async def reset_password(
+    user_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(require_admin),
+):
+    target = db.get(User, user_id)
+    if target and target.is_active:
+        default_pw = db.get(AppSetting, "default_password")
+        password = default_pw.value if default_pw else "Change1234!"
+        target.hashed_password = hash_password(password)
+        target.must_change_password = True
+        log_event("password_reset", username=admin.username, detail={"target": target.username}, db=db)
+        db.commit()
+    return RedirectResponse("/admin/users", status_code=303)
 
 
 _CATEGORY_TYPES = {
     "auth": ["login_ok", "login_fail", "logout", "password_change"],
     "download": ["download_done", "download_fail"],
-    "account": ["user_create", "user_delete"],
+    "account": ["user_create", "user_delete", "password_reset"],
     "system": ["settings_change", "auto_delete"],
 }
 

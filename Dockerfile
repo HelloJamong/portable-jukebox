@@ -46,6 +46,10 @@ ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 ENV DATABASE_URL=sqlite:////app/data/jukebox.db
 ENV DOWNLOAD_DIR=/downloads
+# Trust X-Forwarded-For from a reverse proxy connecting via the published host
+# port (peer IP is the Docker bridge gateway, not 127.0.0.1). Override via
+# FORWARDED_ALLOW_IPS in .env if the proxy sits elsewhere.
+ENV FORWARDED_ALLOW_IPS=172.16.0.0/12
 
 EXPOSE 8000
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
