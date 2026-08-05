@@ -24,6 +24,14 @@ async def lifespan(app: FastAPI):
     scheduler.stop()
 
 
+def rename_legacy_deleted_usernames(db):
+    """26.6.0 이전 패치에서 소프트 삭제된 계정은 username이 리네임되지 않아
+    동일 아이디 재생성이 막혀 있음 — 1회성으로 정리."""
+    for u in db.query(User).filter(User.is_active.is_(False)).all():
+        if "__deleted_" not in u.username:
+            u.username = f"{u.username}__deleted_{u.id}"
+
+
 def _seed_defaults():
     db = SessionLocal()
     try:
@@ -44,6 +52,7 @@ def _seed_defaults():
         for key, value in defaults.items():
             if not db.get(AppSetting, key):
                 db.add(AppSetting(key=key, value=value))
+        rename_legacy_deleted_usernames(db)
         db.commit()
     finally:
         db.close()

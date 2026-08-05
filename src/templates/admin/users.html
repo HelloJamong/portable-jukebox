@@ -57,25 +57,27 @@
                         {% endif %}
                     </td>
                     <td class="px-5 py-3.5 text-neutral-500">{{ u.created_at.strftime('%Y.%m.%d') }}</td>
-                    <td class="px-5 py-3.5 text-right space-x-2">
+                    <td class="px-5 py-3.5">
                         {% if u.id != user.id %}
-                        <form method="post" action="/admin/users/{{ u.id }}/reset-password" class="inline"
-                            onsubmit="return confirm('{{ u.username }} 계정의 비밀번호를 초기 비밀번호로 재설정하시겠습니까?')">
-                            <button type="submit"
-                                class="px-3 py-1 text-xs text-neutral-600 border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors">
-                                비밀번호 초기화
+                        <div class="flex items-center justify-end gap-2 flex-nowrap">
+                            <form method="post" action="/admin/users/{{ u.id }}/reset-password"
+                                onsubmit="return confirm('{{ u.username }} 계정의 비밀번호를 초기 비밀번호로 재설정하시겠습니까?')">
+                                <button type="submit"
+                                    class="px-3 py-1 text-xs text-neutral-600 border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors whitespace-nowrap">
+                                    비밀번호 초기화
+                                </button>
+                            </form>
+                            <button
+                                hx-delete="/admin/users/{{ u.id }}"
+                                hx-confirm="{{ u.username }} 계정을 삭제하시겠습니까?"
+                                hx-target="#user-row-{{ u.id }}"
+                                hx-swap="outerHTML"
+                                class="px-3 py-1 text-xs text-red-500 border border-red-200 rounded-md hover:bg-red-50 transition-colors whitespace-nowrap">
+                                삭제
                             </button>
-                        </form>
-                        <button
-                            hx-delete="/admin/users/{{ u.id }}"
-                            hx-confirm="{{ u.username }} 계정을 삭제하시겠습니까?"
-                            hx-target="#user-row-{{ u.id }}"
-                            hx-swap="outerHTML"
-                            class="px-3 py-1 text-xs text-red-500 border border-red-200 rounded-md hover:bg-red-50 transition-colors">
-                            삭제
-                        </button>
+                        </div>
                         {% else %}
-                        <span class="text-xs text-neutral-300">본인</span>
+                        <div class="text-right"><span class="text-xs text-neutral-300">본인</span></div>
                         {% endif %}
                     </td>
                 </tr>

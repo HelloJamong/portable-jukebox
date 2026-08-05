@@ -1,4 +1,5 @@
 from src.auth import verify_password
+from src.main import rename_legacy_deleted_usernames
 from src.models import ActivityLog, User
 from .conftest import make_user
 
@@ -39,3 +40,23 @@ def test_reset_password_uses_default_and_logs(client, db):
     log = db.query(ActivityLog).filter(ActivityLog.event_type == "password_reset").first()
     assert log is not None
     assert log.username == "adminuser"
+
+
+def test_legacy_deleted_username_backfill_allows_recreate(client, db):
+    _login_admin(client, db)
+    legacy = make_user(db, username="alice")
+    legacy.is_active = False  # simulates a pre-26.6.0 soft delete (no rename)
+    db.commit()
+
+    rename_legacy_deleted_usernames(db)
+    db.commit()
+
+    assert legacy.username == f"alice__deleted_{legacy.id}"
+
+    r = client.post("/admin/users", data={"username": "alice", "role": "user"}, follow_redirects=False)
+    assert r.status_code == 303
+
+    # already-renamed accounts must not be renamed again
+    rename_legacy_deleted_usernames(db)
+    db.commit()
+    assert legacy.username == f"alice__deleted_{legacy.id}"
