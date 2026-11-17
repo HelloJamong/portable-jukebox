@@ -10,7 +10,7 @@ dependencies = [
     "bcrypt>=4.0.0",
     "itsdangerous>=2.1.2",
     "python-dotenv>=1.0.0",
-    "yt-dlp>=2024.1.0",
+    "yt-dlp[default]>=2026.10.26",
     "apscheduler>=3.10.0",
     "alembic>=1.18.4",
 ]

@@ -35,6 +35,8 @@ WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg \
     && rm -rf /var/lib/apt/lists/*
+# yt-dlp needs a JS runtime (deno) to solve YouTube challenges; without it downloads hit 403
+COPY --from=denoland/deno:bin-2.9.8 /deno /usr/local/bin/deno
 
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /app/static ./static
